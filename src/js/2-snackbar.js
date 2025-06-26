@@ -1,42 +1,52 @@
 // Описаний у документації
-import iziToast from 'izitoast';
+import iziToast from "izitoast";
 // Додатковий імпорт стилів
-import 'izitoast/dist/css/iziToast.min.css';
+import "izitoast/dist/css/iziToast.min.css";
 
-const form = document.querySelector('.form');
+const form = document.querySelector('.form')
+// const delayInput = document.querySelector('input[name="delay"]');
+// const promiseInput = document.querySelector('input[name="state"]');
+// const createBtn = document.querySelector('.notif-btn');
 
-form.addEventListener('submit', handleSubmit);
+// let isSuccess;
+// let delay;
 
-function handleSubmit(event) {
-  event.preventDefault();
+// delayInput.addEventListener('input', (evt) => {
+//     delay = evt.currentTarget.value;
+// })
 
-  const { delay, state } = event.target.elements;
-  const delayValue = Number(delay.value);
-  const stateValue = state.value;
+// promiseInput.addEventListener('change', (event) => {
+//     if (event.target.value === 'fulfilled') {
+//         isSuccess = true;
+//     } else if(event.target.value === 'rejected') {isSuccess = false;}
+// })
 
-  setTimeout(() => {
-    new Promise((resolve, reject) => {
-      if (stateValue === 'fulfilled') {
-        resolve('Fulfilled');
-      } else {
-        reject('Rejected');
-      }
+
+
+form.addEventListener('submit', event => {
+    event.preventDefault();
+
+    const delay = Number(form.elements.delay.value);
+    const state = form.elements.state.value;
+
+    const promise = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if(state === "fulfilled") {
+                resolve();
+            } else {
+                reject();
+            }
+        }, delay)
     })
-      .then(() =>
-        iziToast.success({
-          message: ` ✅ Fulfilled promise in ${delayValue}ms`,
-          position: 'topRight',
-          messageColor: 'white',
-          backgroundColor: 'green',
-        })
-      )
-      .catch(() =>
-        iziToast.error({
-          message: `❌ Rejected promise in ${delayValue}ms`,
-          position: 'topRight',
-          messageColor: 'white',
-          backgroundColor: 'red',
-        })
-      );
-  }, delayValue);
-}
+    promise
+        .then(() => iziToast.success({
+                    message: `✅ Fulfilled promise in ${delay}ms`,
+                    closeOnClick: true,
+                    position: "topRight",
+                }))
+        .catch(() => iziToast.error({
+                    message: `❌ Rejected promise in ${delay}ms`,
+                    closeOnClick: true,
+                    position: "topRight",
+                }));
+})

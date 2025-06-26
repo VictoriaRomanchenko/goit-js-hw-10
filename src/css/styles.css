@@ -1,7 +1,5 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #ffffff;
-    color: #434455;
+    font-family: 'e-Ukraine', sans-serif;
 }
 
 ul,
@@ -21,85 +19,42 @@ p {
     margin: 0;
 }
 
+p:last-child {
+    margin-bottom: 0;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
 a {
+    color: currentColor;
     text-decoration: none;
+}
+
+button {
+    cursor: pointer;
 }
 
 img {
     display: block;
     max-width: 100%;
-    object-fit: cover;
+    height: auto;
 }
 
-/* timer */
-input {
-    border-radius: 4px;
-    width: 272px;
-    height: 40px;
-    border: transparent;
-    border: 1px solid #808080;
-    padding: 8px 16px;
 
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 150%;
-    letter-spacing: 0.04em;
-    color: #2e2f42;
-    margin-top: 50px;
-    margin-left: 600px;
+.iziToast-message {
+    font-family: 'e-Ukraine', sans-serif;
 }
 
-button {
-    border-radius: 8px;
-    padding: 8px 16px;
-    width: 75px;
-    height: 40px;
-    border: transparent;
-    background-color: #cfcfcf;
-
-    font-weight: 500;
-    font-size: 16px;
-    line-height: 150%;
-    letter-spacing: 0.04em;
-    color: #989898;
-    cursor: pointer;
+.back {
+    margin-bottom: 32px;
 }
 
-button.active {
-    background-color: rgb(127, 76, 167);
-    color: white;
-}
-
-button:disabled {
-    background-color: #cfcfcf;
-    color: #989898;
-    cursor: not-allowed;
-}
-
-.timer {
-    display: flex;
-    gap: 24px;
-    margin-left: 600px;
-}
-
-.field {
+.list {
     display: flex;
     flex-direction: column;
-    text-align: center;
-    flex-basis: calc((346px - 62px) / 4);
-}
-
-.value {
-    font-weight: 400;
-    font-size: 40px;
-    line-height: 120%;
-    letter-spacing: 0.04em;
-    color: #2e2f42;
-}
-
-.label {
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 150%;
-    color: #2e2f42;
+    gap: 8px;
 }
