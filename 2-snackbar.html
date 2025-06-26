@@ -1,24 +1,27 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/goit-js-hw-10/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>goit-js-hw-10</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://thedigital.gov.ua/fonts">
+    <title>Snackbar</title>
   <script type="module" crossorigin src="/goit-js-hw-10/2-snackbar.js"></script>
   <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/modulepreload-polyfill-B5Qt9EMX.js">
   <link rel="modulepreload" crossorigin href="/goit-js-hw-10/assets/vendor-BbbuE1sJ.js">
   <link rel="stylesheet" crossorigin href="/goit-js-hw-10/assets/vendor-CZjNVMTf.css">
+  <link rel="stylesheet" crossorigin href="/goit-js-hw-10/assets/2-snackbar-EBSZTOuL.css">
 </head>
 
 <body>
-    <form class="form">
-        <label>
-            Delay (ms)
-            <input type="number" name="delay" required />
-        </label>
+    <a href="./index.html" class="back">Back</a>
 
-        <fieldset>
+    <form class="form">
+        <label class="delay-label">
+            Delay (ms)
+            <input type="number" name="delay" class="delay" required />
+        </label>
+        <fieldset class="promise-state">
             <legend>State</legend>
             <label>
                 <input type="radio" name="state" value="fulfilled" required />
@@ -30,7 +33,7 @@
             </label>
         </fieldset>
 
-        <button type="submit">Create notification</button>
+        <button type="submit" class="notif-btn">Create notification</button>
     </form>
 
 </body>
