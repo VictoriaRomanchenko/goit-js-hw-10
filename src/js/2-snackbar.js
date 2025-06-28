@@ -1,52 +1,72 @@
-// Описаний у документації
-import iziToast from "izitoast";
-// Додатковий імпорт стилів
-import "izitoast/dist/css/iziToast.min.css";
+// Імпортуємо iziToast і його стилі (npm)
+import iziToast from 'izitoast';
+import 'izitoast/dist/css/iziToast.min.css';
 
-const form = document.querySelector('.form')
-// const delayInput = document.querySelector('input[name="delay"]');
-// const promiseInput = document.querySelector('input[name="state"]');
-// const createBtn = document.querySelector('.notif-btn');
+const form = document.querySelector('.form');
+const delayInput = form.querySelector('input[name="delay"]');
+const radioGroup = document.querySelector('.radio-group');
+const radios = form.querySelectorAll('input[name="state"]');
 
-// let isSuccess;
-// let delay;
+// Додаємо клас .selected при фокусі
+delayInput.addEventListener('focus', () => {
+  delayInput.classList.add('selected');
+});
 
-// delayInput.addEventListener('input', (evt) => {
-//     delay = evt.currentTarget.value;
-// })
+// Видаляємо клас .selected при втраті фокусу
+delayInput.addEventListener('blur', () => {
+  delayInput.classList.remove('selected');
+});
 
-// promiseInput.addEventListener('change', (event) => {
-//     if (event.target.value === 'fulfilled') {
-//         isSuccess = true;
-//     } else if(event.target.value === 'rejected') {isSuccess = false;}
-// })
-
-
+// Додаємо клас .active до radio-group при виборі fulfilled/rejected
+radios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const selected = form.querySelector('input[name="state"]:checked');
+    if (selected) {
+      radioGroup.classList.add('active');
+    }
+  });
+});
 
 form.addEventListener('submit', event => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const delay = Number(form.elements.delay.value);
-    const state = form.elements.state.value;
+  const delay = Number(form.delay.value);
+  const state = form.state.value;
 
-    const promise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-            if(state === "fulfilled") {
-                resolve();
-            } else {
-                reject();
-            }
-        }, delay)
+  function createPromise(delay, state) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (state === 'fulfilled') {
+          resolve(delay);
+        } else {
+          reject(delay);
+        }
+      }, delay);
+    });
+  }
+
+  createPromise(delay, state)
+    .then(delay => {
+      iziToast.success({
+        title: "Success",
+        message: `✅ Fulfilled promise in ${delay}ms`,
+      });
+      console.log(`✅ Fulfilled promise in ${delay}ms`);
     })
-    promise
-        .then(() => iziToast.success({
-                    message: `✅ Fulfilled promise in ${delay}ms`,
-                    closeOnClick: true,
-                    position: "topRight",
-                }))
-        .catch(() => iziToast.error({
-                    message: `❌ Rejected promise in ${delay}ms`,
-                    closeOnClick: true,
-                    position: "topRight",
-                }));
-})
+    .catch(delay => {
+      iziToast.error({
+        title: "Error",
+        message: `❌ Rejected promise in ${delay}ms`,
+      });
+      console.log(`❌ Rejected promise in ${delay}ms`);
+    })
+    .finally(() => {
+      form.delay.value = ''; // Очистка інпуту затримки
+
+      // Скидання вибору радіокнопок
+      radios.forEach(radio => radio.checked = false);
+
+      // Видалення активного класу для radio-group
+      radioGroup.classList.remove('active');
+    });
+});

@@ -1,103 +1,96 @@
 import flatpickr from "flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
-
 import iziToast from "izitoast";
 import "izitoast/dist/css/iziToast.min.css";
 
-
 const startBtn = document.querySelector('[data-start]');
-const dateInput = document.querySelector('#datetime-picker');
-const daysSpan = document.querySelector('[data-days]');
-const hoursSpan = document.querySelector('[data-hours]');
-const minutesSpan = document.querySelector('[data-minutes]');
-const secondsSpan = document.querySelector('[data-seconds]');
+const dateTimeInput = document.querySelector('#datetime-picker');
 
-const options = {
-  enableTime: true,
-  dateFormat: "Y-m-d H:i",
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
-  allowInput: false,
-  clickOpens: true,
-  onClose(selectedDates) {
-    console.log(selectedDates[0]);
-    userSelectedDate = selectedDates[0];
-    if (userSelectedDate <= new Date()) {
-        iziToast.error({
-            message: "Please choose a date in the future",
-            position: "topRight",
-            closeOnClick: true, // при кліку на саме сповіщення закриває його (тобто не лише по кнопці "закрити" або свайпу)
-        })
-        // window.alert("Please choose a date in the future");
-    } else {startBtn.disabled = false;}
-  },
-};
+const daysEl = document.querySelector('[data-days]');
+const hoursEl = document.querySelector('[data-hours]');
+const minutesEl = document.querySelector('[data-minutes]');
+const secondsEl = document.querySelector('[data-seconds]');
 
-flatpickr('#datetime-picker', options);
-
-let userSelectedDate;
-let countdownInterval;
+let selectedDate = null;
+let countdownInterval = null;
 
 startBtn.disabled = true;
 
-startBtn.addEventListener('click', (event) => {
-  if (!userSelectedDate) return;
-  event.preventDefault();
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    const now = new Date();
+    if (selectedDates[0] <= now) {
+      iziToast.error({
+        title: "Помилка",
+        message: "Please choose a date in the future",
+        position: "topRight",
+      });
+      startBtn.disabled = true;
+      selectedDate = null;
+    } else {
+      selectedDate = selectedDates[0];
+      startBtn.disabled = false;
+    }
+  },
+};
 
-    startBtn.disabled = true;
+flatpickr(dateTimeInput, options);
 
-  clearInterval(countdownInterval);
+startBtn.addEventListener("click", () => {
+  if (!selectedDate) return;
+
+  startBtn.disabled = true;
+  dateTimeInput.disabled = true;
+
+  updateTimer(); // Одразу оновити таймер, щоб не чекати 1 секунду
 
   countdownInterval = setInterval(() => {
-
-    dateInput.disabled = true;
-    
-    const dateNow = new Date();
-    const delta = userSelectedDate - dateNow;
-
-    if (delta <= 0) {
-      clearInterval(countdownInterval);
-      update(0);
-      dateInput.disabled = false;
-      return;
-    }
-
-    update(delta);
+    updateTimer();
   }, 1000);
 });
 
-function update(ms) {
-  const { days, hours, minutes, seconds } = convertMs(ms);
-  daysSpan.innerHTML = pad(days);
-  hoursSpan.innerHTML = pad(hours);
-  minutesSpan.innerHTML = pad(minutes);
-  secondsSpan.innerHTML = pad(seconds);
+function updateTimer() {
+  const now = new Date();
+  const delta = selectedDate - now;
+
+  if (delta <= 0) {
+    clearInterval(countdownInterval);
+    setTimerValues(0, 0, 0, 0);
+    dateTimeInput.disabled = false;
+    // Кнопка залишається неактивною після завершення таймера
+    return;
+  }
+
+  const time = convertMs(delta);
+  setTimerValues(time.days, time.hours, time.minutes, time.seconds);
 }
 
-function pad(value) {
-  return String(value).padStart(2, '0');
+function setTimerValues(days, hours, minutes, seconds) {
+  daysEl.textContent = addLeadingZero(days);
+  hoursEl.textContent = addLeadingZero(hours);
+  minutesEl.textContent = addLeadingZero(minutes);
+  secondsEl.textContent = addLeadingZero(seconds);
+}
+
+function addLeadingZero(value) {
+  // Якщо число однозначне, додає спереду "0"
+  return String(value).padStart(2, "0");
 }
 
 function convertMs(ms) {
-  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
   const day = hour * 24;
 
-  // Remaining days
   const days = Math.floor(ms / day);
-  // Remaining hours
   const hours = Math.floor((ms % day) / hour);
-  // Remaining minutes
   const minutes = Math.floor(((ms % day) % hour) / minute);
-  // Remaining seconds
   const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
   return { days, hours, minutes, seconds };
 }
-
-console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
